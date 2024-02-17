@@ -35,7 +35,7 @@ def train_epoch(
 
 
 def train():
-    device = torch.device("cpu")
+    device = torch.device("cuda:0")
     model = Unet().to(device)
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
