@@ -41,7 +41,7 @@ def load_vocabulary(data_path, mode: str):
         
 
 class BrainDataset(Dataset):
-    def __init__(self, data_path, mode="dataset_small.pt", max_length: int = MAX_LENGTH):
+    def __init__(self, data_path, mode="dataset.pt", max_length: int = MAX_LENGTH):
         self.dataset = load_vocabulary(data_path, mode)
         self.max_length = max_length
         
@@ -53,7 +53,7 @@ class BrainDataset(Dataset):
 
 
 class BigBrainDataset(Dataset):
-    def __init__(self, data_path, mode="dataset_small.pt", max_length: int = MAX_LENGTH):
+    def __init__(self, data_path, mode="dataset.pt", max_length: int = MAX_LENGTH):
         self.dataset = load_vocabulary(data_path, mode)
         self.max_length = max_length
         
@@ -65,7 +65,7 @@ class BigBrainDataset(Dataset):
 
 
 class UltraDuperBigBrainDataset(Dataset):
-    def __init__(self, data_path: str, mode="dataset_small.pt", max_length: int = MAX_LENGTH):
+    def __init__(self, data_path: str, mode="dataset.pt", max_length: int = MAX_LENGTH):
         self.dataset = load_vocabulary(data_path, mode)
         self.max_length = max_length
         

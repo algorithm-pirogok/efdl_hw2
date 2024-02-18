@@ -74,10 +74,8 @@ def run_epoch(data_mode: DataMode, ultra_k: int = None) -> None:
         gpt(data.to(device), mask.to(device))
         torch.cuda.synchronize()
         delta = time() - start
-        if idx > 100:
+        if idx > 1000:
             lst.append(delta)
-        # if not (idx+1) % 2500:
-        #    print(f"Mode: {mode}\nmin: {np.min(lst)}\nmean: {np.mean(lst)}\nmax: {np.max(lst)}\nmedian: {np.median(lst)}\n\n")
     
     lst = np.array(lst) # warm_up
     print(f"Mode: {mode}\nmin: {np.min(lst)}\nmean: {np.mean(lst)}\nmax: {np.max(lst)}\nmedian: {np.median(lst)}")
