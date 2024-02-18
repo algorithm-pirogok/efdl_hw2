@@ -9,7 +9,7 @@ from typing import Literal
 
 class StaticScaler:
     def __init__(self):
-        self.scale_coeff = 2**6
+        self.scale_coeff = 2**8
     
     def scale(self, unscale_loss: torch.Tensor):
         return unscale_loss * self.scale_coeff
