@@ -70,7 +70,7 @@ class UltraDuperBigBrainDataset(Dataset):
         self.max_length = max_length
         
     def __getitem__(self, idx: int):
-        return self.dataset[idx]
+        return self.dataset[idx][:self.max_length] # теперь лист выдаем же
     
     def __len__(self):
         return len(self.dataset)
