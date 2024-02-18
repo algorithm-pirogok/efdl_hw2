@@ -24,7 +24,7 @@ def load_vocabulary(data_path):
         
         print("CREATE VOCABULARY")
         vocabulary = torchtext.vocab.build_vocab_from_iterator(
-            iter(tokens), max_tokens=max_tokens, mspecials=["<unk>"]
+            iter(tokens), max_tokens=max_tokens, specials=["<unk>"]
         )
         vocabulary.set_default_index(vocabulary["<unk>"])
         torch.save(vocabulary, os.path.join(data_path, "vocabulary.pt"))
