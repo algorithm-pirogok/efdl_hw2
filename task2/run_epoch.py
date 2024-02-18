@@ -61,7 +61,9 @@ def run_epoch(data_mode: DataMode) -> None:
     
     print("START EPOCH")
     lst = []
-    print(loader)
+    for a in loader:
+        print(a)
+        break
     for data, mask in tqdm(loader):
         torch.cuda.synchronize()
         start = time()
