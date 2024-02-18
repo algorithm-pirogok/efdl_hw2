@@ -106,7 +106,7 @@ class UltraDuperBigBrainBatchSampler(Sampler):
 
         self.batch = []
         for idx_lists in len_dt.values():
-            idx_lists = shuffle(idx_lists)
+            shuffle(idx_lists)
             for idx in range(0, len(idx_lists), batch_size):
                 self.batch.append(idx_lists[idx: idx+batch_size])
 
