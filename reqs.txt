@@ -1,4 +1,4 @@
 matplotlib
-pytorch
+torch
 torchvision
 tqdm
