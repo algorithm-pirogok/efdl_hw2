@@ -10,12 +10,13 @@ import torchtext
 
 MAX_LENGTH = 640
 max_tokens = 5000
-BASE_PATH = pathlib.Path("data")
+BASE_PATH = pathlib.Path(".")
 
     
 def load_vocabulary(data_path, mode: str):
-    if not os.path.exists(data_path):
-        os.makedirs(data_path)
+    dir_path = BASE_PATH / "data"
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
         
         print("LOAD DATASET")
         dataset = load_dataset("wikitext", "wikitext-103-raw-v1", split="train", ignore_verifications=True)["text"]
@@ -32,9 +33,9 @@ def load_vocabulary(data_path, mode: str):
         
         print("FILTER")
         filter_data = [torch.tensor(vocabulary(elem)).long() for elem in tokens if len(vocabulary(elem))]
-        torch.save(filter_data, BASE_PATH / "dataset.pt")
-        torch.save(filter_data[:10000], BASE_PATH / "dataset_small.pt")
-    return torch.load(BASE_PATH / mode)
+        torch.save(filter_data, dir_path / "dataset.pt")
+        torch.save(filter_data[:10000], dir_path / "dataset_small.pt")
+    return torch.load(dir_path / mode)
         
 
 class BrainDataset(Dataset):
