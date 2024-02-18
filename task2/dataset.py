@@ -45,6 +45,9 @@ class BrainDataset(Dataset):
         
     def __getitem__(self, idx: int):
         return self.dataset[idx]
+    
+    def __len__(self):
+        return len(self.dataset)
 
 
 class BigBrainDataset(Dataset):
@@ -54,6 +57,9 @@ class BigBrainDataset(Dataset):
 
     def __getitem__(self, idx: int):
         return self.dataset[idx]
+    
+    def __len__(self):
+        return len(self.dataset)
 
 
 class UltraDuperBigBrainDataset(Dataset):
