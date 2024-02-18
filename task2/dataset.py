@@ -14,7 +14,7 @@ BASE_PATH = pathlib.Path(".")
 
     
 def load_vocabulary(data_path, mode: str):
-    dir_path = BASE_PATH / "data"
+    dir_path = data_path / "data"
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
         
