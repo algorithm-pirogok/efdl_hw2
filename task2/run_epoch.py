@@ -67,24 +67,24 @@ def run_epoch(data_mode: DataMode, ultra_k: int = None) -> None:
     print("START EPOCH")
     lst = []
 
-    for idx, (data, mask) in tqdm(enumerate(loader)):
+    for idx, (data, mask) in enumerate(tqdm(loader)):
         torch.cuda.synchronize()
         start = time()
         gpt(data.to(device), mask.to(device))
         torch.cuda.synchronize()
         delta = time() - start
-        if idx > 100:
+        if idx > 1000:
             lst.append(delta)
-        if not (idx+1) % 250:
-            print(f"Mode: {mode}\nmin: {np.min(lst)}\nmean: {np.mean(lst)}\nmax: {np.max(lst)}\nmedian: {np.median(lst)}\n\n")
+        # if not (idx+1) % 2500:
+        #    print(f"Mode: {mode}\nmin: {np.min(lst)}\nmean: {np.mean(lst)}\nmax: {np.max(lst)}\nmedian: {np.median(lst)}\n\n")
     
-    lst = np.array(lst[100:]) # warm_up
+    lst = np.array(lst[1000:]) # warm_up
     print(f"Mode: {mode}\nmin: {np.min(lst)}\nmean: {np.mean(lst)}\nmax: {np.max(lst)}\nmedian: {np.median(lst)}")
     
 if __name__ == "__main__":
-    run_epoch(DataMode.BRAIN)
     for k in (1, 5, 10, 20, 50, 640):
         run_epoch(DataMode.ULTRA_DUPER_BIG_BRAIN, k)
+    run_epoch(DataMode.BRAIN)
     run_epoch(DataMode.BIG_BRAIN)
     
     
