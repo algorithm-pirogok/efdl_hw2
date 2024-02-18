@@ -64,16 +64,16 @@ class BigBrainDataset(Dataset):
         return len(self.dataset)
 
 
-class UltraDuperBigBrainDataset(Dataset):
-    def __init__(self, data_path: str, mode="dataset_small.pt", max_length: int = MAX_LENGTH):
-        self.dataset = load_vocabulary(data_path, mode)
-        self.max_length = max_length
+    class UltraDuperBigBrainDataset(Dataset):
+        def __init__(self, data_path: str, mode="dataset_small.pt", max_length: int = MAX_LENGTH):
+            self.dataset = load_vocabulary(data_path, mode)
+            self.max_length = max_length
+            
+        def __getitem__(self, idx: int):
+            return self.dataset[idx]
         
-    def __getitem__(self, idx: int):
-        return self.dataset[idx]
-    
-    def __len__(self):
-        return len(self.dataset)
+        def __len__(self):
+            return len(self.dataset)
 
 
 
@@ -101,7 +101,7 @@ class UltraDuperBigBrainBatchSampler(Sampler):
 
     def __init__(self, dataset: Dataset, k: int, batch_size: int, max_length: Optional[int] = MAX_LENGTH):
         len_dt = defaultdict(list)
-        
+        [len(x) for x in dataset]
         for ind, elem in enumerate(dataset):
             len_dt[len(elem) // k].append(min(ind, max_length))
 
