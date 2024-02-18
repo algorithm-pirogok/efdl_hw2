@@ -68,11 +68,13 @@ def train_epoch(
         with torch.cuda.amp.autocast():
             outputs = model(images)
             loss = criterion(outputs, labels)
+            if scaler is not None:
+                scaler.scale(loss).backward()                
+            else:
+                loss.backward()
         if scaler is not None:
-            scaler.scale(loss).backward()
             scaler.step(optimizer)
         else:
-            loss.backward()
             optimizer.step()
         optimizer.zero_grad()
 
@@ -96,4 +98,4 @@ def train(mode_of_precision):
         train_epoch(train_loader, model, criterion, optimizer, device=device, mode_of_precision=mode_of_precision)
 
 if __name__ == '__main__':
-    train(mode_of_precision="dynamic")
+    train(mode_of_precision="static")
