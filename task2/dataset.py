@@ -11,7 +11,7 @@ MAX_LENGTH = 640
 max_tokens = 5000
 
     
-def load_vocabulary(data_path):
+def load_vocabulary(data_path, mode: str):
     if not os.path.exists(data_path):
         os.makedirs(data_path)
         
@@ -33,11 +33,12 @@ def load_vocabulary(data_path):
         filter_data = [torch.tensor(vocabulary(elem)).long() for elem in tokens if len(vocabulary(elem))]
         torch.save(filter_data, os.path.join(data_path, "dataset.pt"))
         torch.save(filter_data[:10000], os.path.join(data_path, "dataset_small.pt"))
+    return torch.load(os.path.join(data_path, mode))
         
 
 class BrainDataset(Dataset):
-    def __init__(self, data_path, max_length: int = MAX_LENGTH):
-        self.dataset = load_dataset(data_path)
+    def __init__(self, data_path, mode="dataset_small.pt", max_length: int = MAX_LENGTH):
+        self.dataset = load_dataset(data_path, mode)
         self.max_length = max_length
         
     def __getitem__(self, idx: int):
@@ -45,8 +46,8 @@ class BrainDataset(Dataset):
 
 
 class BigBrainDataset(Dataset):
-    def __init__(self, data_path, max_length: int = MAX_LENGTH):
-        self.dataset = load_dataset(data_path)
+    def __init__(self, data_path, mode="dataset_small.pt", max_length: int = MAX_LENGTH):
+        self.dataset = load_dataset(data_path, mode)
         self.max_length = max_length
 
     def __getitem__(self, idx: int):
@@ -54,7 +55,7 @@ class BigBrainDataset(Dataset):
 
 
 class UltraDuperBigBrainDataset(Dataset):
-    def __init__(self, data_path: str, max_length: int = MAX_LENGTH, n_bins: int = 1):
+    def __init__(self, data_path: str, mode="dataset_small.pt", max_length: int = MAX_LENGTH, n_bins: int = 1):
         pass
 
     def __getitem__(self, idx: int):
