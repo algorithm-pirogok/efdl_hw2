@@ -39,7 +39,7 @@ class DynamicScaler(StaticScaler):
         else:
             if self.cnt == 10:
                 self.scale_coeff *= 2
-            self.cnt = (self.cnt + 1) % 10
+            self.cnt = (self.cnt + 1) % 11
             
 
 
@@ -96,4 +96,4 @@ def train(mode_of_precision):
         train_epoch(train_loader, model, criterion, optimizer, device=device, mode_of_precision=mode_of_precision)
 
 if __name__ == '__main__':
-    train(mode_of_precision="static")
+    train(mode_of_precision="dynamic")
