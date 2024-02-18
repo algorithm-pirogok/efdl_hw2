@@ -64,16 +64,16 @@ class BigBrainDataset(Dataset):
         return len(self.dataset)
 
 
-    class UltraDuperBigBrainDataset(Dataset):
-        def __init__(self, data_path: str, mode="dataset_small.pt", max_length: int = MAX_LENGTH):
-            self.dataset = load_vocabulary(data_path, mode)
-            self.max_length = max_length
-            
-        def __getitem__(self, idx: int):
-            return self.dataset[idx]
+class UltraDuperBigBrainDataset(Dataset):
+    def __init__(self, data_path: str, mode="dataset_small.pt", max_length: int = MAX_LENGTH):
+        self.dataset = load_vocabulary(data_path, mode)
+        self.max_length = max_length
         
-        def __len__(self):
-            return len(self.dataset)
+    def __getitem__(self, idx: int):
+        return self.dataset[idx]
+    
+    def __len__(self):
+        return len(self.dataset)
 
 
 
