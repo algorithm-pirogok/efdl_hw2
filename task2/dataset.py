@@ -33,6 +33,7 @@ def load_vocabulary(data_path, mode: str):
         filter_data = [torch.tensor(vocabulary(elem)).long() for elem in tokens if len(vocabulary(elem))]
         torch.save(filter_data, os.path.join(data_path, "dataset.pt"))
         torch.save(filter_data[:10000], os.path.join(data_path, "dataset_small.pt"))
+    print("PATH", os.path.join(data_path, mode))
     return torch.load(os.path.join(data_path, mode))
         
 
