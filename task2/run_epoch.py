@@ -5,7 +5,7 @@ import os
 import torch
 from dataset import load_dataset
 
-DATASET_PATH = os.getcwd() / "data"
+DATASET_PATH = os.path.join(os.getcwd(), "data")
 
 class DataMode(Enum):
     BRAIN = 1
