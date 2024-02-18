@@ -81,11 +81,13 @@ def run_epoch(data_mode: DataMode, ultra_k: int = None) -> None:
     
     lst = np.array(lst) # warm_up
     print(f"Mode: {mode}\nmin: {np.min(lst)}\nmean: {np.mean(lst)}\nmax: {np.max(lst)}\nmedian: {np.median(lst)}")
+    return np.min(lst), np.mean(lst), np.max(lst), np.median(lst)
     
 if __name__ == "__main__":
+    ans = {}
     for k in (1, 5, 10, 20, 50, 640):
-        run_epoch(DataMode.ULTRA_DUPER_BIG_BRAIN, k)
-    run_epoch(DataMode.BRAIN)
-    run_epoch(DataMode.BIG_BRAIN)
-    
+        ans[f"{k}"] = appendrun_epoch(DataMode.ULTRA_DUPER_BIG_BRAIN, k)
+    ans["BigBrain"] = run_epoch(DataMode.BIG_BRAIN)
+    ans["Brain"] = run_epoch(DataMode.BRAIN)
+    print(ans)
     
