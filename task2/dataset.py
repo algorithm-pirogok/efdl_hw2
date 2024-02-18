@@ -82,11 +82,11 @@ def collate_fn(
     if max_length is None:
         max_length = max([elem.shape[0] for elem in batch])
     answer = torch.zeros((len(batch), max_length), dtype=batch[0].dtype)
-    target = torch.zeros((len(batch), max_length), dtype=batch[0].dtype)
+    target = torch.zeros((len(batch), max_length), dtype=torch.bool)
     for ind, elem in enumerate(batch):
         fix_elem = elem[:max_length]
         fix_len = fix_elem.shape[0]
-        answer[ind][:fix_len], target[ind][:fix_len] = fix_elem, 1
+        answer[ind][:fix_len], target[ind][:fix_len] = fix_elem, True
     return answer, target
 
 
