@@ -74,4 +74,4 @@ def run_epoch(data_mode: DataMode) -> None:
     print(f"Mode: {mode}\nmin: {np.min(lst)}\nmean: {np.mean(lst)}\nmax: {np.max(lst)}\nmedian: {np.median(lst)}")
     
 if __name__ == "__main__":
-    run_epoch(DataMode.BRAIN)
+    run_epoch(DataMode.BIG_BRAIN)
