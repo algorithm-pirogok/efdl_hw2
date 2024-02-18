@@ -62,7 +62,7 @@ def run_epoch(data_mode: DataMode, ultra_k: int = None) -> None:
         mode = f"ULTRA_DUPER_BIG_BRAIN_{ultra_k}"
         dataset = UltraDuperBigBrainDataset(BASE_PATH)
         sampler = UltraDuperBigBrainBatchSampler(dataset, ultra_k, batch_size=32)
-        loader = DataLoader(dataset, batch_size=32, collate_fn=collate_fn, sampler=sampler)
+        loader = DataLoader(dataset, batch_size=1, collate_fn=collate_fn, sampler=sampler)
     
     print("START EPOCH")
     lst = []
