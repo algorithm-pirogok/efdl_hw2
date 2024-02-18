@@ -70,17 +70,19 @@ def train_epoch(
         with torch.cuda.amp.autocast():
             outputs = model(images)
             loss = criterion(outputs, labels)
-        if scaler is not None:
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)             
-        else:
-            loss.backward()
-            optimizer.step()
+            if scaler is not None:
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)             
+            else:
+                loss.backward()
+                optimizer.step()
         optimizer.zero_grad()
 
         accuracy = ((outputs > 0.5) == labels).float().mean()
         
         wandb.log({"Loss": loss.item(), 
+                   "Accuracy": accuracy.item() * 100, "Scale": scaler.scale_coeff if scaler is not None else 1})
+        print({"Loss": loss.item(), 
                    "Accuracy": accuracy.item() * 100, "Scale": scaler.scale_coeff if scaler is not None else 1})
         pbar.set_description(f"Loss: {round(loss.item(), 4)} " f"Accuracy: {round(accuracy.item() * 100, 4)}")
         
@@ -102,6 +104,6 @@ def train(mode_of_precision):
 
 if __name__ == '__main__':
     wandb.login() # Добавили wandb
-    wandb.init(project='hw_2', name="static-256")
+    wandb.init(project='hw_2', name="base")
 
-    train(mode_of_precision="static")
+    train(mode_of_precision="base")
