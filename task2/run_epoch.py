@@ -75,3 +75,5 @@ def run_epoch(data_mode: DataMode) -> None:
     
 if __name__ == "__main__":
     run_epoch(DataMode.BIG_BRAIN)
+    run_epoch(DataMode.BRAIN)
+    
