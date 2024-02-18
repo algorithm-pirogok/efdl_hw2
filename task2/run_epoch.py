@@ -22,7 +22,7 @@ class DataMode(Enum):
 class GPT2(nn.Module):
     def __init__(self, num_embeddings, d_model=1024, nhead=8):
         super().__init__()
-        self.encoder = nn.Sequence(
+        self.encoder = nn.Sequential(
             nn.Embedding(
                 num_embeddings=num_embeddings,
                 embedding_dim=d_model,
