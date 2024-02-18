@@ -101,12 +101,13 @@ class UltraDuperBigBrainBatchSampler(Sampler):
 
     def __init__(self, dataset: UltraDuperBigBrainDataset, k: int, batch_size: int, max_length: Optional[int] = MAX_LENGTH):
         len_dt = defaultdict(list)
-        shuffle(dataset)
+        
         for ind, elem in enumerate(dataset):
             len_dt[len(elem) // k].append(min(ind, max_length))
 
         self.batch = []
         for idx_lists in len_dt.values():
+            idx_lists = shuffle(idx_lists)
             for idx in range(0, len(idx_lists), batch_size):
                 self.batch.append(idx_lists[idx: idx+batch_size])
 
