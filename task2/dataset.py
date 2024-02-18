@@ -1,5 +1,6 @@
 import os
 from typing import Optional
+import pathlib
 
 from datasets import load_dataset
 import torch
@@ -9,6 +10,7 @@ import torchtext
 
 MAX_LENGTH = 640
 max_tokens = 5000
+BASE_PATH = pathlib.Path("data")
 
     
 def load_vocabulary(data_path, mode: str):
@@ -27,14 +29,12 @@ def load_vocabulary(data_path, mode: str):
             iter(tokens), max_tokens=max_tokens, specials=["<unk>"]
         )
         vocabulary.set_default_index(vocabulary["<unk>"])
-        torch.save(vocabulary, os.path.join(data_path, "vocabulary.pt"))
         
         print("FILTER")
         filter_data = [torch.tensor(vocabulary(elem)).long() for elem in tokens if len(vocabulary(elem))]
-        torch.save(filter_data, os.path.join(data_path, "dataset.pt"))
-        torch.save(filter_data[:10000], os.path.join(data_path, "dataset_small.pt"))
-    print("PATH", os.path.join(data_path, mode))
-    return torch.load(os.path.join(data_path, mode))
+        torch.save(filter_data, BASE_PATH / "dataset.pt")
+        torch.save(filter_data[:10000], BASE_PATH / "dataset_small.pt")
+    return torch.load(BASE_PATH / mode)
         
 
 class BrainDataset(Dataset):
