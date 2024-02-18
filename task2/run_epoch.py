@@ -45,13 +45,13 @@ def get_gpt2_model(num_embeddings) -> torch.nn.Module:
 def run_epoch(data_mode: DataMode) -> None:
     device = torch.device("cuda:0")
     
-    dataset = load_vocabulary(BASE_PATH, "dataset_small.pt")
     gpt = get_gpt2_model(max_tokens)
     
     if data_mode is DataMode.BRAIN:
         mode = "Brain"
         collator = lambda x: collate_fn(x, None)
-        loader = DataLoader(BrainDataset(BASE_PATH), batch_size=32, collate_fn=collator)
+        dataset = BrainDataset(BASE_PATH)
+        loader = DataLoader(dataset, batch_size=32, collate_fn=collator)
     elif data_mode is DataMode.BIG_BRAIN:
         mode = "BigBrain"
         loader = DataLoader(BigBrainDataset(BASE_PATH), batch_sampler=32, collate_fn=collate_fn)
