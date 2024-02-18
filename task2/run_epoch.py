@@ -86,7 +86,7 @@ def run_epoch(data_mode: DataMode, ultra_k: int = None) -> None:
 if __name__ == "__main__":
     ans = {}
     for k in (1, 5, 10, 20, 50, 640):
-        ans[f"{k}"] = appendrun_epoch(DataMode.ULTRA_DUPER_BIG_BRAIN, k)
+        ans[f"{k}"] = run_epoch(DataMode.ULTRA_DUPER_BIG_BRAIN, k)
     ans["BigBrain"] = run_epoch(DataMode.BIG_BRAIN)
     ans["Brain"] = run_epoch(DataMode.BRAIN)
     print(ans)
