@@ -75,7 +75,7 @@ def run_epoch(data_mode: DataMode, ultra_k: int = None) -> None:
         delta = time() - start
         if idx > 100:
             lst.append(delta)
-        if not (idx-1) % 250:
+        if not (idx+1) % 250:
             print(f"Mode: {mode}\nmin: {np.min(lst)}\nmean: {np.mean(lst)}\nmax: {np.max(lst)}\nmedian: {np.median(lst)}\n\n")
     
     lst = np.array(lst[100:]) # warm_up
