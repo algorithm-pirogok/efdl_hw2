@@ -101,7 +101,6 @@ class UltraDuperBigBrainBatchSampler(Sampler):
 
     def __init__(self, dataset: Dataset, k: int, batch_size: int, max_length: Optional[int] = MAX_LENGTH):
         len_dt = defaultdict(list)
-        [len(x) for x in dataset]
         for ind, elem in enumerate(dataset):
             len_dt[len(elem) // k].append(min(ind, max_length))
 
