@@ -75,11 +75,12 @@ def train_epoch(
             loss.backward()
             optimizer.step()
         optimizer.zero_grad()
-        # TODO: your code for loss scaling here
 
         accuracy = ((outputs > 0.5) == labels).float().mean()
 
         pbar.set_description(f"Loss: {round(loss.item(), 4)} " f"Accuracy: {round(accuracy.item() * 100, 4)}")
+    if scaler is not None:
+        print("Coeff:", scaler.scale_coeff)
 
 
 def train(mode_of_precision):
