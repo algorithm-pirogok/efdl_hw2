@@ -51,16 +51,9 @@ def train_epoch(
     criterion: torch.nn.modules.loss._Loss,
     optimizer: torch.optim.Optimizer,
     device: torch.device,
-    mode_of_precision: Literal["base", "static", "dynamic"] = "static"
+    scaler: StaticScaler
 ) -> None:
     model.train()
-
-    if mode_of_precision == "static":
-        scaler = StaticScaler()
-    elif mode_of_precision == "dynamic":
-        scaler = DynamicScaler()
-    elif mode_of_precision == "base":
-        scaler = None
     
     pbar = tqdm(enumerate(train_loader), total=len(train_loader))
     for i, (images, labels) in pbar:
@@ -90,17 +83,26 @@ def train_epoch(
                "AccuracyFinal": accuracy.item() * 100})
 
 
-def train(mode_of_precision):
+def train(mode_of_precision: Literal["base", "static", "dynamic"] = "static"):
+    
     device = torch.device("cuda:0")
     model = Unet().to(device)
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
+    
+    if mode_of_precision == "static":
+        scaler = StaticScaler()
+    elif mode_of_precision == "dynamic":
+        scaler = DynamicScaler()
+    elif mode_of_precision == "base":
+        scaler = None
+    
     train_loader = get_train_data()
 
     num_epochs = 5
     for epoch in range(0, num_epochs):
-        train_epoch(train_loader, model, criterion, optimizer, device=device, mode_of_precision=mode_of_precision)
+        train_epoch(train_loader, model, criterion, optimizer, device=device, scaler=scaler)
 
 if __name__ == '__main__':
     wandb.login() # Добавили wandb
