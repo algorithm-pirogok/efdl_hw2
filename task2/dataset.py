@@ -70,60 +70,51 @@ class UltraDuperBigBrainDataset(Dataset):
         self.max_length = max_length
         
     def __getitem__(self, idx: int):
-        return self.dataset[idx][: self.max_length]
+        return self.dataset[idx]
     
     def __len__(self):
         return len(self.dataset)
 
 
 
-def collate_fn(batch: list[torch.Tensor], max_length: Optional[int] = MAX_LENGTH) -> tuple[torch.Tensor, torch.Tensor]:
+def collate_fn(
+    batch: list[torch.Tensor], max_length: Optional[int] = MAX_LENGTH
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Pad each sequence of the incoming sequences list
     :param batch: a list of the objects received from the dataset by __getitem__
     :param max_length: maximum sequence length to pad to (for "Brain" approach only)
-    :return: padded sequences and their masks
+    :return: tuple of padded sequences and corresponding training targets
     """
-    # Clip to maximum length
-    batch = [b[:max_length] for b in batch]
-    # Calculate length of output batch
-    result_length = max([len(b) for b in batch])
-    # Construct new batch with mask
-    result = torch.zeros((len(batch), result_length), dtype=batch[0].dtype)
-    mask = torch.zeros_like(result, dtype=torch.bool)
-    for i, tensor in enumerate(batch):
-        result[i, : tensor.size(0)] = tensor
-        mask[i, : tensor.size(0)] = 1
-    return result, mask
+    if max_length is None:
+        max_length = max([elem.shape[0] for elem in batch])
+    answer = torch.zeros((len(batch), max_length), dtype=batch[0].dtype)
+    target = torch.zeros((len(batch), max_length), dtype=torch.bool)
+    for ind, elem in enumerate(batch):
+        fix_elem = elem[:max_length]
+        fix_len = fix_elem.shape[0]
+        answer[ind][:fix_len], target[ind][:fix_len] = fix_elem, True
+    return answer, target.transpose(0, 1)
 
 
 class UltraDuperBigBrainBatchSampler(Sampler):
-    def __init__(self, dataset: UltraDuperBigBrainDataset, k: int, batch_size: int, max_length: Optional[int] = MAX_LENGTH):
-        lengths = [len(x) for x in dataset]
-        groups = defaultdict(list)
     
-        # group by lengths into buckets
-        for i, l in enumerate(lengths):
-            assert l > 0
-            groups[min(l, max_length) // k].append(i)
-        print(f"{len(groups)} groups:")
-        for g, indices in groups.items():
-            print(f"[{g * k}, {g * k + 1}):\t{len(indices)}")
-
-        # construct batch indices
-        self.batches = []
-        for g, indices in groups.items():
-            # shuffle indices
-            shuffle(indices)
-            for b_start_ind in range(0, len(indices), batch_size):
-                self.batches.append(indices[b_start_ind : b_start_ind + batch_size])
- 
-        # shuffle batches
-        shuffle(self.batches)
-        assert sum((len(b) for b in self.batches)) == len(dataset)
-
+    def __init__(self, dataset, k, batch_size, max_length=None):
+        len_dt = defaultdict(list)
+        
+        for ind, elem in enumerate(dataset):
+            len_dt[len(elem) // k].append(min(ind, max_length) if max_length else ind)
+        
+        self.batch = []
+        for idx_lists in len_dt.values():
+            idx_lists = torch.randperm(len(idx_lists)).tolist()
+            for idx in range(0, len(idx_lists), batch_size):
+                self.batch.append(idx_lists[idx: idx+batch_size])
+        shuffle(self.batch)
+        
     def __len__(self):
-        return len(self.batches)
+        return len(self.batch)
 
     def __iter__(self):
-        return iter(self.batches)
+        for batch in self.batch:
+            yield batch
