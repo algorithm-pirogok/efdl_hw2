@@ -45,7 +45,7 @@ def get_gpt2_model(num_embeddings) -> torch.nn.Module:
 def run_epoch(data_mode: DataMode) -> None:
     device = torch.device("cuda:0")
     
-    gpt = get_gpt2_model(max_tokens)
+    gpt = get_gpt2_model(max_tokens).to(device)
     
     if data_mode is DataMode.BRAIN:
         mode = "Brain"
