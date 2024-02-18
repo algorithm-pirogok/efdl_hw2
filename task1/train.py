@@ -106,6 +106,6 @@ def train(mode_of_precision: Literal["base", "static", "dynamic"] = "static"):
 
 if __name__ == '__main__':
     wandb.login() # Добавили wandb
-    wandb.init(project='hw_2', name="dynamic")
+    wandb.init(project='hw_2', name="fix-dynamic")
 
     train(mode_of_precision="dynamic")
