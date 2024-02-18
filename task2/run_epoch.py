@@ -6,7 +6,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from dataset import load_vocabulary, max_tokens, BrainDataset, BigBrainDataset, collate_fn, BASE_PATH
+from dataset import load_vocabulary, max_tokens, collate_fn, BASE_PATH
+from dataset import BrainDataset, BigBrainDataset, UltraDuperBigBrainDataset, UltraDuperBigBrainBatchSampler
 from transformer import PositionalEncoding
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -42,7 +43,7 @@ def get_gpt2_model(num_embeddings) -> torch.nn.Module:
     return GPT2(num_embeddings)
 
 
-def run_epoch(data_mode: DataMode) -> None:
+def run_epoch(data_mode: DataMode, ultra_k: int = None) -> None:
     device = torch.device("cuda:0")
     
     gpt = get_gpt2_model(max_tokens).to(device)
@@ -57,24 +58,32 @@ def run_epoch(data_mode: DataMode) -> None:
         dataset = BigBrainDataset(BASE_PATH)
         collator = lambda x: collate_fn(x, None)
         loader = DataLoader(dataset, batch_size=32, collate_fn=collator, sampler=None)
-    else:
-        pass
+    elif data_mode in DataMode.ULTRA_DUPER_BIG_BRAIN:
+        mode = f"ULTRA_DUPER_BIG_BRAIN_{ultra_k}"
+        dataset = UltraDuperBigBrainDataset
+        sampler = UltraDuperBigBrainBatchSampler(dataset, ultra_k, batch_size=32)
+        loader = DataLoader(dataset, batch_size=32, collate_fn=collate_fn, sampler=sampler)
     
     print("START EPOCH")
     lst = []
 
-    for data, mask in tqdm(loader):
+    for idx, (data, mask) in tqdm(loader):
         torch.cuda.synchronize()
         start = time()
         gpt(data.to(device), mask.to(device))
         torch.cuda.synchronize()
         delta = time() - start
-        lst.append(delta)
+        if idx > 100:
+            lst.append(delta)
+        if not idx % 250:
+            print(f"Mode: {mode}\nmin: {np.min(lst)}\nmean: {np.mean(lst)}\nmax: {np.max(lst)}\nmedian: {np.median(lst)}\n\n")
     
-    lst = np.array(lst[5:]) # warm_up
+    lst = np.array(lst[100:]) # warm_up
     print(f"Mode: {mode}\nmin: {np.min(lst)}\nmean: {np.mean(lst)}\nmax: {np.max(lst)}\nmedian: {np.median(lst)}")
     
 if __name__ == "__main__":
+    for k in (1, 5, 10, 20, 50, 640):
+        run_epoch(DataMode.ULTRA_DUPER_BIG_BRAIN, k)
     run_epoch(DataMode.BRAIN)
     run_epoch(DataMode.BIG_BRAIN)
     

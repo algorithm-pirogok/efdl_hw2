@@ -1,6 +1,8 @@
+from collections import defaultdict
 import os
 from typing import Optional
 import pathlib
+from random import shuffle
 
 from datasets import load_dataset
 import torch
@@ -63,11 +65,16 @@ class BigBrainDataset(Dataset):
 
 
 class UltraDuperBigBrainDataset(Dataset):
-    def __init__(self, data_path: str, mode="dataset_small.pt", max_length: int = MAX_LENGTH, n_bins: int = 1):
-        pass
-
+    def __init__(self, data_path: str, mode="dataset_small.pt", max_length: int = MAX_LENGTH):
+        self.dataset = load_vocabulary(data_path, mode)
+        self.max_length = max_length
+        
     def __getitem__(self, idx: int):
-        pass
+        return self.dataset[idx]
+    
+    def __len__(self):
+        return len(self.dataset)
+
 
 
 def collate_fn(
@@ -92,11 +99,21 @@ def collate_fn(
 
 class UltraDuperBigBrainBatchSampler(Sampler):
 
-    def __init__(self, batch_size: int, max_length: Optional[int] = MAX_LENGTH):
-        pass
+    def __init__(self, dataset: UltraDuperBigBrainDataset, k: int, batch_size: int, max_length: Optional[int] = MAX_LENGTH):
+        len_dt = defaultdict(list)
+        shuffle(dataset)
+        for ind, elem in enumerate(dataset):
+            len_dt[len(elem) // k].append(min(ind, max_length))
+
+        self.batch = []
+        for idx_lists in len_dt.values():
+            for idx in range(0, len(idx_lists), batch_size):
+                self.batch.append(idx_lists[idx: idx+batch_size])
+
+        shuffle(self.batch)
 
     def __len__(self):
-        pass
+        return len(self.batch)
 
     def __iter__(self):
-        pass
+        return iter(self.batch)
