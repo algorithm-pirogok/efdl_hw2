@@ -22,12 +22,18 @@ class StaticScaler:
                     if not torch.isfinite(param.grad).all().item():
                         self._update()
                         return
-        optimizer.step()
-                    
+        optimizer.step()         
     
     def _update(self):
         pass
 
+class DynamicScaler(StaticScaler):
+    def __init__(self):
+        super().__init__()
+        
+    def _update(self):
+        return super()._update()
+    
 
 def train_epoch(
     train_loader: torch.utils.data.DataLoader,
@@ -54,13 +60,13 @@ def train_epoch(
         with torch.cuda.amp.autocast():
             outputs = model(images)
             loss = criterion(outputs, labels)
-            if scaler is not None:
-                scaler.scale(loss).backward()
-                scaler.step(optimizer)
-            else:
-                loss.backward()
-                optimizer.step()
-            optimizer.zero_grad()
+        if scaler is not None:
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+        else:
+            loss.backward()
+            optimizer.step()
+        optimizer.zero_grad()
         # TODO: your code for loss scaling here
 
         accuracy = ((outputs > 0.5) == labels).float().mean()
