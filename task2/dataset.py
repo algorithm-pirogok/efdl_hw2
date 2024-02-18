@@ -1,6 +1,7 @@
 import os
 from typing import Optional
 
+from datasets import load_dataset
 import torch
 from torch.utils.data.dataset import Dataset
 from torch.utils.data import Sampler
@@ -10,7 +11,7 @@ MAX_LENGTH = 640
 max_tokens = 5000
 
     
-def load_dataset(data_path):
+def load_vocabulary(data_path):
     if not os.path.exists(data_path):
         os.makedirs(data_path)
         

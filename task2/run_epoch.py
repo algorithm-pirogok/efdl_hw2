@@ -3,7 +3,7 @@ import os
 
 
 import torch
-from dataset import load_dataset
+from dataset import load_vocabulary
 
 DATASET_PATH = os.path.join(os.getcwd(), "data")
 
@@ -21,4 +21,4 @@ def run_epoch(data_mode: DataMode) -> None:
     pass
 
 
-load_dataset(DATASET_PATH)
+load_vocabulary(DATASET_PATH)
