@@ -87,7 +87,6 @@ def collate_fn(
         fix_elem = elem[:max_length]
         fix_len = fix_elem.shape[0]
         answer[ind][:fix_len], target[ind][:fix_len] = fix_elem, True
-    print("RETURN", answer, target)
     return answer, target.transpose(0, 1)
 
 
