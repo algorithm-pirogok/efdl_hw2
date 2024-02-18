@@ -51,11 +51,11 @@ def run_epoch(data_mode: DataMode) -> None:
         mode = "Brain"
         collator = lambda x: collate_fn(x, None)
         dataset = BrainDataset(BASE_PATH)
-        loader = DataLoader(dataset, batch_size=32, collate_fn=collator)
+        loader = DataLoader(dataset, batch_size=32, collate_fn=collator, sampler=None)
     elif data_mode is DataMode.BIG_BRAIN:
         mode = "BigBrain"
         dataset = BigBrainDataset(BASE_PATH)
-        loader = DataLoader(data_mode, batch_sampler=32, collate_fn=collate_fn)
+        loader = DataLoader(data_mode, batch_sampler=32, collate_fn=collate_fn, sampler=None)
     else:
         pass
     
