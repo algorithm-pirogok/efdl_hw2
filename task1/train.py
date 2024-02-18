@@ -20,20 +20,28 @@ class StaticScaler:
                 if param.grad is not None:
                     param.grad = param.grad / self.scale_coeff
                     if not torch.isfinite(param.grad).all().item():
-                        self._update()
+                        self._update(False)
                         return
-        optimizer.step()         
+        optimizer.step()
+        self._update(True)    
     
-    def _update(self):
+    def _update(self, mode):
         pass
 
 class DynamicScaler(StaticScaler):
     def __init__(self):
         super().__init__()
+        self.cnt = 0
         
-    def _update(self):
-        return super()._update()
-    
+    def _update(self, mode):
+        if not mode:
+            self.scale_coeff //= 2
+        else:
+            if self.cnt == 10:
+                self.scale_coeff *= 2
+            self.cnt = (self.cnt + 1) % 10
+            
+
 
 def train_epoch(
     train_loader: torch.utils.data.DataLoader,
@@ -48,7 +56,7 @@ def train_epoch(
     if mode_of_precision == "static":
         scaler = StaticScaler()
     elif mode_of_precision == "dynamic":
-        pass
+        scaler = DynamicScaler()
     elif mode_of_precision == "base":
         scaler = None
     
