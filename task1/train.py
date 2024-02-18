@@ -21,6 +21,7 @@ class StaticScaler:
                     param.grad = param.grad / self.scale_coeff
                     if not torch.isfinite(param.grad).all().item():
                         self._update()
+                        return
         optimizer.step()
                     
     
