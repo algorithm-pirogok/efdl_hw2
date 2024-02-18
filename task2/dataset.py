@@ -71,7 +71,7 @@ class UltraDuperBigBrainDataset(Dataset):
 
 
 def collate_fn(
-    batch: list[torch.Tensor], max_length: Optional[int] = None
+    batch: list[torch.Tensor], max_length: Optional[int] = MAX_LENGTH
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Pad each sequence of the incoming sequences list
