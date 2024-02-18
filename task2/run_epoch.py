@@ -67,7 +67,7 @@ def run_epoch(data_mode: DataMode, ultra_k: int = None) -> None:
     print("START EPOCH")
     lst = []
 
-    for idx, (data, mask) in tqdm(loader):
+    for idx, (data, mask) in tqdm(enumerate(loader)):
         torch.cuda.synchronize()
         start = time()
         gpt(data.to(device), mask.to(device))
