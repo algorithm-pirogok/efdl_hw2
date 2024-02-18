@@ -87,7 +87,7 @@ def collate_fn(
         fix_elem = elem[:max_length]
         fix_len = fix_elem.shape[0]
         answer[ind][:fix_len], target[ind][:fix_len] = fix_elem, True
-    return answer, target
+    return answer, target.transpose((0, 1))
 
 
 class UltraDuperBigBrainBatchSampler(Sampler):
