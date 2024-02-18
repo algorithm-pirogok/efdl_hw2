@@ -110,7 +110,8 @@ class UltraDuperBigBrainBatchSampler(Sampler):
             idx_lists = torch.randperm(len(idx_lists)).tolist()
             for idx in range(0, len(idx_lists), batch_size):
                 self.batch.append(idx_lists[idx: idx+batch_size])
-
+        shuffle(self.batch)
+        
     def __len__(self):
         return len(self.batch)
 
