@@ -77,24 +77,24 @@ class UltraDuperBigBrainDataset(Dataset):
 
 
 
-def collate_fn(
-    batch: list[torch.Tensor], max_length: Optional[int] = MAX_LENGTH
-) -> tuple[torch.Tensor, torch.Tensor]:
+def collate_fn_for_sequence(batch: list[torch.Tensor], max_length: Optional[int] = MAX_LENGTH) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Pad each sequence of the incoming sequences list
     :param batch: a list of the objects received from the dataset by __getitem__
     :param max_length: maximum sequence length to pad to (for "Brain" approach only)
-    :return: tuple of padded sequences and corresponding training targets
+    :return: padded sequences and their masks
     """
-    if max_length is None:
-        max_length = max([elem.shape[0] for elem in batch])
-    answer = torch.zeros((len(batch), max_length), dtype=batch[0].dtype)
-    target = torch.zeros((len(batch), max_length), dtype=torch.bool)
-    for ind, elem in enumerate(batch):
-        fix_elem = elem[:max_length]
-        fix_len = fix_elem.shape[0]
-        answer[ind][:fix_len], target[ind][:fix_len] = fix_elem, True
-    return answer, target.transpose(0, 1)
+    # Clip to maximum length
+    batch = [b[:max_length] for b in batch]
+    # Calculate length of output batch
+    result_length = max([len(b) for b in batch])
+    # Construct new batch with mask
+    result = torch.zeros((len(batch), result_length), dtype=batch[0].dtype)
+    mask = torch.zeros_like(result, dtype=torch.bool)
+    for i, tensor in enumerate(batch):
+        result[i, : tensor.size(0)] = tensor
+        mask[i, : tensor.size(0)] = 1
+    return result, mask
 
 
 class UltraDuperBigBrainBatchSampler(Sampler):
