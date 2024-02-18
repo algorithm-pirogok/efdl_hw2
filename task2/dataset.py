@@ -70,7 +70,7 @@ class UltraDuperBigBrainDataset(Dataset):
         self.max_length = max_length
         
     def __getitem__(self, idx: int):
-        return [self.dataset[ix] for ix in idx]
+        return self.dataset[idx]
     
     def __len__(self):
         return len(self.dataset)
@@ -98,19 +98,18 @@ def collate_fn(
 
 
 class UltraDuperBigBrainBatchSampler(Sampler):
-
-    def __init__(self, dataset: Dataset, k: int, batch_size: int, max_length: Optional[int] = MAX_LENGTH):
+    
+    def __init__(self, dataset, k, batch_size, max_length=None):
         len_dt = defaultdict(list)
+        
         for ind, elem in enumerate(dataset):
-            len_dt[len(elem) // k].append(min(ind, max_length))
-
+            len_dt[len(elem) // k].append(min(ind, max_length) if max_length else ind)
+        
         self.batch = []
         for idx_lists in len_dt.values():
-            shuffle(idx_lists)
+            idx_lists = torch.randperm(len(idx_lists)).tolist()
             for idx in range(0, len(idx_lists), batch_size):
                 self.batch.append(idx_lists[idx: idx+batch_size])
-
-        shuffle(self.batch)
 
     def __len__(self):
         return len(self.batch)
