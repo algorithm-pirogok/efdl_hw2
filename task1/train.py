@@ -80,11 +80,11 @@ def train_epoch(
 
         accuracy = ((outputs > 0.5) == labels).float().mean()
         
-        wandb.add({"Loss": loss.item(), 
+        wandb.log({"Loss": loss.item(), 
                    "Accuracy": accuracy.item() * 100, "Scale": scaler.scale_coeff if scaler is not None else 1})
         pbar.set_description(f"Loss: {round(loss.item(), 4)} " f"Accuracy: {round(accuracy.item() * 100, 4)}")
         
-    wandb.add({"LossFinal": loss.item(), 
+    wandb.log({"LossFinal": loss.item(), 
                "AccuracyFinal": accuracy.item() * 100})
 
 
