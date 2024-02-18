@@ -99,7 +99,7 @@ def collate_fn(
 
 class UltraDuperBigBrainBatchSampler(Sampler):
 
-    def __init__(self, dataset: UltraDuperBigBrainDataset, k: int, batch_size: int, max_length: Optional[int] = MAX_LENGTH):
+    def __init__(self, dataset: Dataset, k: int, batch_size: int, max_length: Optional[int] = MAX_LENGTH):
         len_dt = defaultdict(list)
         
         for ind, elem in enumerate(dataset):
