@@ -115,4 +115,5 @@ class UltraDuperBigBrainBatchSampler(Sampler):
         return len(self.batch)
 
     def __iter__(self):
-        return iter(self.batch)
+        for batch in self.batch:
+            yield batch
