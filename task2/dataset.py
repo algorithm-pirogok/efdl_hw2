@@ -98,23 +98,32 @@ def collate_fn(
 
 
 class UltraDuperBigBrainBatchSampler(Sampler):
+    def __init__(self, dataset: UltraDuperBigBrainDataset, k: int, batch_size: int, max_length: Optional[int] = MAX_LENGTH):
+        lengths = [len(x) for x in dataset]
+        groups = defaultdict(list)
     
-    def __init__(self, dataset, k, batch_size, max_length=None):
-        len_dt = defaultdict(list)
-        
-        for ind, elem in enumerate(dataset):
-            len_dt[len(elem) // k].append(min(ind, max_length) if max_length else ind)
-        
-        self.batch = []
-        for idx_lists in len_dt.values():
-            idx_lists = torch.randperm(len(idx_lists)).tolist()
-            for idx in range(0, len(idx_lists), batch_size):
-                self.batch.append(idx_lists[idx: idx+batch_size])
-        shuffle(self.batch)
-        
+        # group by lengths into buckets
+        for i, l in enumerate(lengths):
+            assert l > 0
+            groups[min(l, max_length) // k].append(i)
+        print(f"{len(groups)} groups:")
+        for g, indices in groups.items():
+            print(f"[{g * k}, {g * k + 1}):\t{len(indices)}")
+
+        # construct batch indices
+        self.batches = []
+        for g, indices in groups.items():
+            # shuffle indices
+            shuffle(indices)
+            for b_start_ind in range(0, len(indices), batch_size):
+                self.batches.append(indices[b_start_ind : b_start_ind + batch_size])
+ 
+        # shuffle batches
+        shuffle(self.batches)
+        assert sum((len(b) for b in self.batches)) == len(dataset)
+
     def __len__(self):
-        return len(self.batch)
+        return len(self.batches)
 
     def __iter__(self):
-        for batch in self.batch:
-            yield batch
+        return iter(self.batches)
