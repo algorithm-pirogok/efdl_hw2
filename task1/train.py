@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 from tqdm.auto import tqdm
+import wandb
 
 from unet import Unet
 
@@ -78,10 +79,13 @@ def train_epoch(
         optimizer.zero_grad()
 
         accuracy = ((outputs > 0.5) == labels).float().mean()
-
+        
+        wandb.add({"Loss": loss.item(), 
+                   "Accuracy": accuracy.item() * 100, "Scale": scaler.scale_coeff if scaler is not None else 1})
         pbar.set_description(f"Loss: {round(loss.item(), 4)} " f"Accuracy: {round(accuracy.item() * 100, 4)}")
-    if scaler is not None:
-        print("Coeff:", scaler.scale_coeff)
+        
+    wandb.add({"LossFinal": loss.item(), 
+               "AccuracyFinal": accuracy.item() * 100})
 
 
 def train(mode_of_precision):
@@ -97,4 +101,7 @@ def train(mode_of_precision):
         train_epoch(train_loader, model, criterion, optimizer, device=device, mode_of_precision=mode_of_precision)
 
 if __name__ == '__main__':
+    wandb.login() # Добавили wandb
+    wandb.init(project='hw_2', name="static-256")
+
     train(mode_of_precision="static")
