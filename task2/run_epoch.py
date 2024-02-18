@@ -64,7 +64,7 @@ def run_epoch(data_mode: DataMode) -> None:
     for data, mask in tqdm(loader):
         torch.cuda.synchronize()
         start = time()
-        gpt(start, mask)
+        gpt(data, mask)
         torch.cuda.synchronize()
         delta = time() - start
         lst.append(delta)
