@@ -36,6 +36,7 @@ class DynamicScaler(StaticScaler):
     def _update(self, mode):
         if not mode:
             self.scale_coeff //= 2
+            self.cnt = 0
         else:
             if self.cnt == 10:
                 self.scale_coeff *= 2
